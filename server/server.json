@@ -1,0 +1,60 @@
+{
+  "articles": [
+    {
+      "id": 1,
+      "title": "Introduction to C#",
+      "description": "A beginner-friendly guide to C# programming language.",
+      "image": "",
+      "author": "John Smith",
+      "date": "2025-01-15T10:30:00"
+    },
+    {
+      "id": 2,
+      "title": "ASP.NET Core Basics",
+      "description": "Learn how to build web applications using ASP.NET Core.",
+      "image": "",
+      "author": "Anna Brown",
+      "date": "2025-02-10T14:00:00"
+    },
+    {
+      "id": 3,
+      "title": "Working with Databases",
+      "description": "An overview of database integration in .NET applications.",
+      "image": "",
+      "author": "Michael Johnson",
+      "date": "2025-03-05T09:15:00"
+    },
+    {
+      "id": 4,
+      "title": "REST API Design",
+      "description": "Best practices for designing RESTful APIs.",
+      "image": "",
+      "author": "Emily Davis",
+      "date": "2025-03-20T16:45:00"
+    },
+    {
+      "id": 5,
+      "title": "Deploying .NET Applications",
+      "description": "A guide to deploying your .NET applications to production.",
+      "image": "",
+      "author": "David Wilson",
+      "date": "2025-04-01T12:00:00"
+    },
+    {
+      "id": 6,
+      "title": "тест",
+      "description": "опис тест",
+      "image": null,
+      "author": "автор тест",
+      "date": "2026-04-03T20:31:29.1800583+03:00"
+    },
+    {
+      "id": 7,
+      "title": "тест2",
+      "description": "опистест2",
+      "image": null,
+      "author": "автор2",
+      "date": "2026-04-03T20:46:31.4315246+03:00"
+    }
+  ]
+}
