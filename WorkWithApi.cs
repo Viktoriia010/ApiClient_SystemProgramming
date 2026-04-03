@@ -122,11 +122,7 @@ internal class WorkWithApi
             try
             {
                 var response = await client.GetStringAsync(url);
-                var obj = JsonSerializer.Deserialize<List<Article>>(response, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true,
-                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
-                }); //для того щоб джсон не переробляв айді на стрінг
+                var obj = JsonSerializer.Deserialize<List<Article>>(response); //для того щоб джсон не переробляв айді на стрінг
                 if (obj != null)
                 {
                     return obj;
