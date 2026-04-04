@@ -9,7 +9,7 @@ namespace ApiClient
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
 
-            await WorkWithApi.Run();
+            await new WorkWithApi().Run();
         }
     }
 }

@@ -14,7 +14,7 @@ internal class WorkWithApi
     private static readonly string URL = "http://localhost:3000/articles";
     static HttpClient _httpClient = new HttpClient();
 
-    public static async Task Run()
+    public async Task Run()
     {
         while (true)
         {
@@ -24,6 +24,8 @@ internal class WorkWithApi
             Console.WriteLine("3 - Пошук даних за тайтлом");
             Console.WriteLine("4 - Пошук даних за автором");
             Console.WriteLine("5 - Додати article");
+            Console.WriteLine("6 - Видалити article за ID");
+            Console.WriteLine("7 - Оновити тайтл за ID");
             Console.Write("Введіть число: ");
             int choise = int.Parse(Console.ReadLine());
             switch (choise)
@@ -32,7 +34,7 @@ internal class WorkWithApi
                     return;
                 case 1:
                     {
-                        var data = await WorkWithApi.GetArticles(URL);
+                        var data = await GetArticles(URL);
                         if (data != null)
                         {
                             foreach (var item in data)
@@ -51,7 +53,7 @@ internal class WorkWithApi
                     {
                         Console.Write("Введіть id: ");
                         int id = int.Parse(Console.ReadLine());
-                        var article = WorkWithApi.GetArticleById(id, URL);
+                        var article = GetArticleById(id);
                         Console.WriteLine(article.Result);
                     }
                     break;
@@ -59,7 +61,7 @@ internal class WorkWithApi
                     {
                         Console.Write("Введіть тайтл: ");
                         string title = Console.ReadLine();
-                        var article = WorkWithApi.GetArticleByTitle(title, URL);
+                        var article = GetArticleByTitle(title, URL);
                         Console.WriteLine(article.Result);
                     }
                     break;
@@ -67,7 +69,7 @@ internal class WorkWithApi
                     {
                         Console.Write("Введіть автора: ");
                         string author = Console.ReadLine();
-                        var article = WorkWithApi.GetArticleByAuthor(author, URL);
+                        var article = GetArticleByAuthor(author, URL);
                         foreach (var item in article.Result)
                         {
                             Console.WriteLine(item);
@@ -90,7 +92,47 @@ internal class WorkWithApi
                             date = DateTime.Now
                         }
                         ;
-                        await WorkWithApi.AddArticle(article);
+                        await AddArticle(article);
+
+                    }
+                    break;
+                case 6:
+                    {
+                        Console.Write("Введіть id: ");
+                        int id = int.Parse(Console.ReadLine());
+                        bool successful = await DeleteArticleById(id);
+                        if (successful)
+                        {
+                            Console.WriteLine("Успішно");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Помилка");
+                        }
+
+                    }
+                    break;
+                case 7:
+                    {
+                        Console.Write("Введіть id: ");
+                        int id = int.Parse(Console.ReadLine());
+                        Article ar = await GetArticleById(id);
+                        if (ar == null)
+                        {
+                            Console.WriteLine("Такого запису не існує");
+                            break;
+                        }
+                        Console.Write("Введіть тайтл: ");
+                        string title = Console.ReadLine();
+                        bool successful = await PatchArticle(ar, title);
+                        if (successful)
+                        {
+                            Console.WriteLine("Успішно");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Помилка");
+                        }
 
                     }
                     break;
@@ -98,7 +140,27 @@ internal class WorkWithApi
         }
 
     }
-    public static async Task<int?> AddArticle(Article ar)
+  
+    async Task<bool> DeleteArticleById(int id)
+    {
+        var response = await _httpClient.DeleteAsync($"{URL}/{id}");
+        return response.IsSuccessStatusCode;
+    }
+    async Task<Article> GetArticleById(int id)
+    {
+        var response = await _httpClient.GetStringAsync($"{URL}/{id}");
+        var obj = JsonSerializer.Deserialize<Article>(response);
+        return obj;
+    }
+    async Task<bool> PatchArticle(Article ar, string title)
+    {
+        ar.title = title;
+        var json = JsonSerializer.Serialize(ar);
+        var data = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await _httpClient.PatchAsync($"{URL}/{ar.id}", data);
+        return response.IsSuccessStatusCode;
+    }
+     async Task<int?> AddArticle(Article ar)
     {
         var json = JsonSerializer.Serialize(ar);
         var data = new StringContent(json, Encoding.UTF8, "application/json");
@@ -114,7 +176,7 @@ internal class WorkWithApi
         }
         return null;
     }
-    static async Task<List<Article>> GetArticles(string url)
+     async Task<List<Article>> GetArticles(string url)
     {
 
         using (HttpClient client = new HttpClient())
@@ -122,7 +184,7 @@ internal class WorkWithApi
             try
             {
                 var response = await client.GetStringAsync(url);
-                var obj = JsonSerializer.Deserialize<List<Article>>(response); //для того щоб джсон не переробляв айді на стрінг
+                var obj = JsonSerializer.Deserialize<List<Article>>(response); 
                 if (obj != null)
                 {
                     return obj;
@@ -138,24 +200,8 @@ internal class WorkWithApi
         }
 
     }
-    static async Task<Article> GetArticleById(int id, string url)
-    {
-        var articles = await GetArticles(url);
-        if (articles == null)
-        {
-            Console.WriteLine("Помилка завантаження");
-            return null;
-        }
-        var article = articles.FirstOrDefault(p => p.id == id);
-        if (article == null)
-        {
-            Console.WriteLine("Такого запису не існує");
-            return null;
-        }
-        return article;
-    }
 
-    static async Task<Article> GetArticleByTitle(string title, string url)
+     async Task<Article> GetArticleByTitle(string title, string url)
     {
         var articles = await GetArticles(url);
         if (articles == null)
@@ -171,7 +217,7 @@ internal class WorkWithApi
         }
         return article;
     }
-    static async Task<List<Article>> GetArticleByAuthor(string author, string url)
+     async Task<List<Article>> GetArticleByAuthor(string author, string url)
     {
         var articles = await GetArticles(url);
         if (articles == null)
